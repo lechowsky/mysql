@@ -221,9 +221,14 @@ docker_setup_db() {
 	if [ -n "$MYSQL_ROOT_HOST" ] && [ "$MYSQL_ROOT_HOST" != 'localhost' ]; then
 		# no, we don't care if read finds a terminating character in this heredoc
 		# https://unix.stackexchange.com/questions/265149/why-is-set-o-errexit-breaking-this-read-heredoc-expression/265151#265151
+		echo " >>>>>>>>>>  INSTALLING USERS"
 		read -r -d '' rootCreate <<-EOSQL || true
 			CREATE USER 'root'@'${MYSQL_ROOT_HOST}' IDENTIFIED BY '${MYSQL_ROOT_PASSWORD}' ;
 			GRANT ALL ON *.* TO 'root'@'${MYSQL_ROOT_HOST}' WITH GRANT OPTION ;
+			create database phrasalverb;
+		  create user 'phverbusr'@'%' identified by 'phverbpwd';
+			grant all on phrasalverb.* to 'phverbusr'@'%';
+			flush privileges;
 		EOSQL
 	fi
 
